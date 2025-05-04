@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ITR Loan Eligibility</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="itr.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>ITR-Based Loan Eligibility</h1>
+    <div class="form-grid">
+      <div><strong>Previous Year</strong><br>
+        <label>Profit/Income: <input type="number" id="pyIncome" /></label>
+        <label>Depreciation: <input type="number" id="pyDep" /></label>
+        <label>Other Income: <input type="number" id="pyOther" /></label>
+        <label>Tax Deducted: <input type="number" id="pyTax" /></label>
+      </div>
+      <div><strong>Latest Year</strong><br>
+        <label>Profit/Income: <input type="number" id="lyIncome" /></label>
+        <label>Depreciation: <input type="number" id="lyDep" /></label>
+        <label>Other Income: <input type="number" id="lyOther" /></label>
+        <label>Tax Deducted: <input type="number" id="lyTax" /></label>
+      </div>
+    </div>
+    <label>Existing EMI: <input type="number" id="existingEmiI" /></label>
+    <label>FOIR %: <input type="number" id="foirI" /></label>
+    <label>Interest Rate (% p.a): <input type="number" id="rateI" /></label>
+    <label>Loan Tenure (Years): <input type="number" id="tenureI" /></label>
+    <button onclick="calculateITR()">Calculate</button>
+    <div id="resultI" class="result-box" style="display:none;"></div>
+    <a href="index.html" class="back-button">← Home</a>
+  </div>
+</body>
+</html>
