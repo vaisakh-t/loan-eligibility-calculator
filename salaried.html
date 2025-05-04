@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Salaried Loan Eligibility</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="salaried.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Salaried Loan Eligibility</h1>
+    <label>Month 1 Salary: <input type="number" id="salary1" /></label>
+    <label>Month 2 Salary: <input type="number" id="salary2" /></label>
+    <label>Month 3 Salary: <input type="number" id="salary3" /></label>
+    <label>Existing EMI: <input type="number" id="existingEmiS" /></label>
+    <label>FOIR %: <input type="number" id="foirS" /></label>
+    <label>Interest Rate (% p.a): <input type="number" id="rateS" /></label>
+    <label>Loan Tenure (Years): <input type="number" id="tenureS" /></label>
+    <button onclick="calculateSalaried()">Calculate</button>
+    <div id="resultS" class="result-box" style="display:none;"></div>
+    <a href="index.html" class="back-button">← Home</a>
+  </div>
+</body>
+</html>
