@@ -3,17 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loan Eligibility App - Home</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Loan Eligibility Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e0e5ec;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #e0e5ec;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 10px 10px 30px #babecc, -10px -10px 30px #ffffff;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      background: #e0e5ec;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: inset 6px 6px 10px #babecc, inset -6px -6px 10px #ffffff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .tab-button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      box-shadow: inset 4px 4px 8px #babecc, inset -4px -4px 8px #ffffff;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      box-shadow: 4px 4px 10px #babecc, -4px -4px 10px #ffffff;
+      cursor: pointer;
+    }
+    .result {
+      background: #f0fff0;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+    }
+    h2 { color: #333; }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Loan Eligibility Web App</h1>
-    <div class="home-buttons">
-      <a href="salaried.html" class="button">Salaried Assessment</a>
-      <a href="itr.html" class="button">ITR Assessment</a>
-      <a href="emi.html" class="button">EMI Calculator</a>
+    <div class="tabs">
+      <button class="tab-button active" onclick="showTab('salaried')">Salaried</button>
+      <button class="tab-button" onclick="showTab('itr')">ITR Based</button>
+    </div>
+
+    <!-- Salaried Section -->
+    <div id="salaried" class="tab-content active">
+      <h2>Salaried Loan Eligibility</h2>
+      <input type="number" id="salary1" placeholder="Month 1 Salary">
+      <input type="number" id="salary2" placeholder="Month 2 Salary">
+      <input type="number" id="salary3" placeholder="Month 3 Salary">
+      <input type="number" id="foirS" placeholder="FOIR % (e.g. 65)">
+      <input type="number" id="existingEmiS" placeholder="Existing EMI">
+      <input type="number" id="rateS" placeholder="Interest Rate %">
+      <input type="number" id="tenureS" placeholder="Tenure (Years)">
+      <button onclick="calculateSalaried()">Calculate</button>
+      <div class="result" id="resultS" style="display:none;"></div>
+    </div>
+
+    <!-- ITR Section -->
+    <div id="itr" class="tab-content">
+      <h2>ITR Based Loan Eligibility</h2>
+      <p><strong>Previous Year</strong></p>
+      <input type="number" id="pyIncome" placeholder="Total Income / Net Profit">
+      <input type="number" id="pyDep" placeholder="Depreciation">
+      <input type="number" id="pyOther" placeholder="Other Income">
+      <input type="number" id="pyTax" placeholder="Tax Deducted">
+
+      <p><strong>Latest Year</strong></p>
+      <input type="number" id="lyIncome" placeholder="Total Income / Net Profit">
+      <input type="number" id="lyDep" placeholder="Depreciation">
+      <input type="number" id="lyOther" placeholder="Other Income">
+      <input type="number" id="lyTax" placeholder="Tax Deducted">
+
+      <input type="number" id="foirI" placeholder="FOIR % (e.g. 65)">
+      <input type="number" id="existingEmiI" placeholder="Existing EMI">
+      <input type="number" id="rateI" placeholder="Interest Rate %">
+      <input type="number" id="tenureI" placeholder="Tenure (Years)">
+      <button onclick="calculateITR()">Calculate</button>
+      <div class="result" id="resultI" style="display:none;"></div>
     </div>
   </div>
+
+  <script>
+    function showTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function calculateSalaried() {
+      let s1 = parseFloat(document.getElementById("salary1").value) || 0;
+      let s2 = parseFloat(document.getElementById("salary2").value) || 0;
+      let s3 = parseFloat(document.getElementById("salary3").value) || 0;
+      let foir = parseFloat(document.getElementById("foirS").value) || 65;
+      let emi = parseFloat(document.getElementById("existingEmiS").value) || 0;
+      let rate = parseFloat(document.getElementById("rateS").value);
+      let tenure = parseFloat(document.getElementById("tenureS").value);
+
+      let avg = (s1 + s2 + s3) / 3;
+      let minTakeHome = avg - 15000;
+      let foirIncome = avg * (foir / 100);
+      let usedIncome = Math.min(minTakeHome, foirIncome);
+      let effectiveFoir = (usedIncome / avg) * 100;
+
+      let eligibleEmi = Math.max(0, usedIncome - emi);
+      let months = tenure * 12;
+      let r = rate / 1200;
+      let loan = (r === 0) ? eligibleEmi * months : eligibleEmi * ((Math.pow(1 + r, months) - 1) / (r * Math.pow(1 + r, months)));
+
+      document.getElementById("resultS").innerHTML = `
+        <p>Average Salary: ₹${avg.toFixed(2)}</p>
+        <p>Income Considered: ₹${usedIncome.toFixed(2)}</p>
+        <p>Effective FOIR Used: ${effectiveFoir.toFixed(2)}%</p>
+        <p>Eligible EMI: ₹${eligibleEmi.toFixed(2)}</p>
+        <p>Eligible Loan Amount: ₹${loan.toFixed(2)}</p>
+      `;
+      document.getElementById("resultS").style.display = "block";
+    }
+
+    function calculateITR() {
+      let pyInc = parseFloat(document.getElementById("pyIncome").value) || 0;
+      let pyDep = parseFloat(document.getElementById("pyDep").value) || 0;
+      let pyOther = parseFloat(document.getElementById("pyOther").value) || 0;
+      let pyTax = parseFloat(document.getElementById("pyTax").value) || 0;
+
+      let lyInc = parseFloat(document.getElementById("lyIncome").value) || 0;
+      let lyDep = parseFloat(document.getElementById("lyDep").value) || 0;
+      let lyOther = parseFloat(document.getElementById("lyOther").value) || 0;
+      let lyTax = parseFloat(document.getElementById("lyTax").value) || 0;
+
+      let totalPrev = pyInc + pyDep + pyOther - pyTax;
+      let totalLatest = lyInc + lyDep + lyOther - lyTax;
+      let threshold = pyInc * 1.5;
+
+      let finalIncome = (lyInc > threshold)
+        ? ((pyInc + threshold) / 2)
+        : lyInc;
+
+      let monthly = finalIncome / 12;
+      let minTakeHome = monthly - 15000;
+      let foir = parseFloat(document.getElementById("foirI").value) || 65;
+      let foirIncome = monthly * (foir / 100);
+      let usedIncome = Math.min(minTakeHome, foirIncome);
+      let effectiveFoir = (usedIncome / monthly) * 100;
+
+      let emi = parseFloat(document.getElementById("existingEmiI").value) || 0;
+      let eligibleEmi = Math.max(0, usedIncome - emi);
+      let rate = parseFloat(document.getElementById("rateI").value);
+      let tenure = parseFloat(document.getElementById("tenureI").value);
+      let months = tenure * 12;
+      let r = rate / 1200;
+
+      let loan = (r === 0) ? eligibleEmi * months : eligibleEmi * ((Math.pow(1 + r, months) - 1) / (r * Math.pow(1 + r, months)));
+
+      document.getElementById("resultI").innerHTML = `
+        <p>Previous Year Net: ₹${totalPrev.toFixed(2)}</p>
+        <p>Latest Year Net: ₹${totalLatest.toFixed(2)}</p>
+        <p>Final Annual Income Considered: ₹${finalIncome.toFixed(2)}</p>
+        <p>Monthly Income: ₹${monthly.toFixed(2)}</p>
+        <p>Income Used for EMI: ₹${usedIncome.toFixed(2)}</p>
+        <p>Effective FOIR Used: ${effectiveFoir.toFixed(2)}%</p>
+        <p>Eligible EMI: ₹${eligibleEmi.toFixed(2)}</p>
+        <p>Eligible Loan Amount: ₹${loan.toFixed(2)}</p>
+      `;
+      document.getElementById("resultI").style.display = "block";
+    }
+  </script>
 </body>
 </html>
